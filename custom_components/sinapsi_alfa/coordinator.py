@@ -39,7 +39,6 @@ from .helpers import check_modbus_conflict, log_debug, log_info, log_warning
 from .repairs import (
     create_connection_issue,
     create_modbus_conflict_issue,
-    create_recovery_notification,
     create_warmup_issue,
     create_warmup_recovery_notification,
     delete_connection_issue,
@@ -261,27 +260,6 @@ class SinapsiAlfaCoordinator(DataUpdateCoordinator[bool]):
                     "async_update_data",
                     "Connection restored, repair issue deleted",
                     downtime_seconds=downtime_seconds,
-                )
-
-                # Always create recovery notification (with or without script info)
-                create_recovery_notification(
-                    self.hass,
-                    self._entry_id,
-                    self.conf_name,
-                    started_at=started_at,
-                    ended_at=ended_at,
-                    downtime=downtime,
-                    script_name=self._recovery_script if self._recovery_script_executed else None,
-                    script_executed_at=script_executed_at,
-                )
-                log_info(
-                    _LOGGER,
-                    "async_update_data",
-                    "Recovery notification created",
-                    started_at=started_at,
-                    ended_at=ended_at,
-                    downtime=downtime,
-                    script=self._recovery_script if self._recovery_script_executed else None,
                 )
 
                 # Reset tracking variables
